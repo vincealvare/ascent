@@ -22,7 +22,6 @@ export const main = Reach.App(() => {
 
     init();
 
-    //write app here
     Bidder.only(() => {
         const price = declassify(interact.seePrice());
     });
