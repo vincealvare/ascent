@@ -1,6 +1,5 @@
 'reach 0.1';
 
-//provide methods
 const Player = {
     seePrice: Fun([], UInt),
     getDescription: Fun([], Bytes(280))
@@ -8,15 +7,12 @@ const Player = {
 
 export const main = Reach.App(() => {
     const Creator = Participant('Creator', {
-        //interact interface
         ...Player,
     });
     const Bidder = Participant('Bidder', {
-        //interact interface
         ...Player,
     });
     const Buyer = Participant('Buyer', {
-        //interact interface
         ...Player,
     });
 
