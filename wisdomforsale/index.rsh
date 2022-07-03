@@ -53,6 +53,9 @@ Seller.publish(wisdom);
 transfer(price).to(Seller);
 commit();
 
+each([Seller, Buyer], () => interact.reportTransfer(price));
+Buyer.interact.reportWisdom(wisdom);
+
 exit();
 
 });

@@ -20,14 +20,14 @@ const iBalance = toAU(1000);
 const showBalance = async (acc) => console.log(`Your balance is ${toSU(await stdlib.balanceOf(acc))} ${suStr}.`);
 
 const commonInteract = (role) => ({
-    reportCancellation: () => {
-        console.log(`${role == 'buyer' ? 'You' : 'The buyer'} cancelled the order.`);
-    },
     reportTransfer: (payment) => {
         console.log(`The contract paid ${toSU(payment)} ${suStr} to ${role == 'seller' ? 'you' : 'the seller'}.`);
     },
     reportPayment: (payment) => {
-        console.log(`The contract paid ${toSU(payment)} ${suStr} to ${role == 'seller' ? 'you' : 'the seller'}.`);
+        console.log(`${role == 'buyer' ? 'You' : 'The buyer'} paid ${toSU(payment)} ${suStr} to the contract.`);
+    },
+    reportCancellation: () => {
+        console.log(`${role == 'buyer' ? 'You' : 'The buyer'} cancelled the order.`);
     },
 });
 
