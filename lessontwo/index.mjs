@@ -6,6 +6,8 @@ const startingBalance = stdlib.parseCurrency(100);
 const accAlice = await stdlib.newTestAccount(startingBalance);
 const accBob = await stdlib.newTestAccount(startingBalance);
 
+//const fmt = (x) => stdlib.formatCurrency(x, 4);
+
 const ctcAlice = accAlice.contract(backend);
 const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
 
@@ -21,7 +23,7 @@ const Player = (Who) => ({
     seeOutcome: (outcome) => {
         console.log(`${Who} saw outcome ${OUTCOME[outcome]}`);
     }
-})
+});
 
 await Promise.all([
     ctcAlice.p.Alice({
