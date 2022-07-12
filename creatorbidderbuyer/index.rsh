@@ -27,7 +27,8 @@ export const main = Reach.App(() => {
     Buyer.only(() => {
         const description = declassify(interact.getDescription());
     });
-    Buyer.publish(description);
+    //something is wrong here! does not compile
+    Buyer.publish(description, payment).pay(payment);
     commit();
 
-});
+}); 
