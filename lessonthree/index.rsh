@@ -1,28 +1,5 @@
 'reach 0.1';
 
-const [ isHand, ROCK, PAPER, SCISSORS ] = makeEnum(3);
-const [ isOutcome, B_WINS, DRAW, A_WINS ] = makeEnum(3);
-
-const winner = (handAlice, handBob) => 
-    ((handAlice + (4 - handBob)) % 3);
-
-//assertions = always true
-assert(winner(ROCK, PAPER) == B_WINS);
-assert(winner(PAPER, ROCK) == A_WINS);
-assert(winner(ROCK, ROCK) == DRAW);
-
-//forall is a computation only referenced inside of assertions
-//and allows you to quantify over all possible inputs provided
-forall(UInt, handAlice => 
-    forall(UInt, handBob =>
-        assert(isOutcome(winner(handAlice, handBob)))));
-
-//if hands are same value, always a draw
-forall(UInt, (hand) => 
-    assert(winner(hand, hand) == DRAW));
-
-
-
 const Player = {
     getHand: Fun([], UInt),
     seeOutcome: Fun([UInt], Null)
@@ -56,8 +33,7 @@ export const main = Reach.App(() => {
     }); 
     Bob.publish(handBob).pay(wager);
 
-    //this is the codification of rps, math is indeed everywhere
-    const outcome = (handAlice + (4 - handBob)) % 3; 
+    const outcome = (handAlice + (4 - handBob)) % 3;
     //require(handBob == (handAlice + 1) % 3);
     //assert(outcome == 0);
     const              [forAlice, forBob] = 
