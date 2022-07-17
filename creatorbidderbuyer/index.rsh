@@ -30,7 +30,7 @@ export const main = Reach.App(() => {
         const description = declassify(interact.getDescription());
         const payment = declassify(interact.getPrice());
     });
-    //something is wrong here! does not compile
+
     Buyer.publish(description, payment).pay(payment);
     commit();
 
