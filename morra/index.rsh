@@ -1,11 +1,66 @@
 'reach 0.1';
 
+//let's make some enumerations
+const [isHand, ZERU, UNU, DUI, TRE, QUATTRU, CINQUE] = makeEnum(6);
+const [isGuess, G_ZERU, G_UNU, G_DUI, G_TRE, G_QUATTRU, G_CINQUE, G_SEI, G_SETTE, G_OTTU, G_NOVE, G_DECE] = makeEnum(11);
+const [isTotal, T_ZERU, T_UNU, T_DUI, T_TRE, T_QUATTRU, T_CINQUE, T_SEI, T_SETTE, T_OTTU, T_NOVE, T_DECE] = makeEnum(11);
+const [isScoreAlice, A_ZERO, A_ONE, A_TWO, A_THREE] = makeEnum(4);
+const [isScoreBob, B_ZERO, B_ONE, B_TWO, B_THREE] = makeEnum(4);
+const [isOutcome, A_WINS, DRAW, B_WINS] = makeEnum(3);
+
+//let's write the logic
+const outcome = (handAlice, handBob, guessAlice, guessBob) => {
+    if(guessAlice == guessBob) {
+        const outcome = DRAW;
+        return outcome;
+    } else if(guessAlice == (handAlice + handBob)) {
+        const outcome = A_WINS;
+        return outcome;
+    } else if(guessBob == (handAlice + handBob)) {
+        const outcome = B_WINS;
+        return outcome;
+    } else {
+        const outcome = DRAW;
+        return outcome;
+    };
+};
+
+const scoreAlice = (handAlice, handBob, guessAlice, guessBob) => {
+    //const scoreAlice = 0;
+    if(guessAlice == (handAlice + handBob) && guessBob != (handAlice + handBob)) {
+        //scoreAlice++;
+        const scoreAlice = 1;
+        return scoreAlice;
+    } else {
+        const scoreAlice = 0;
+        return scoreAlice;
+    };
+};
+
+const scoreBob = (handAlice, handBob, guessAlice, guessBob) => {
+    if(guessBob == (handAlice + handBob) && guessAlice != (handAlice + handBob)) {
+        const scoreBob = 1;
+        return scoreBob;
+    } else {
+        const scoreBob = 0;
+        return scoreBob;
+    };
+};
+
+//While scoreAlice && scoreBob < 3, loop it up. Whomstever is first to 3 wins
+
+
+//let's make some assertions
+//soon
+
+
 const Player = {
-    ...hasRandom,
     throwHand: Fun([], UInt),
     guessTotal: Fun([], UInt),
     seeTotal: Fun([UInt], Null),
-    seeOutcome: Fun([UInt], Null)
+    seeOutcome: Fun([UInt], Null),
+    seeScoreAlice: Fun([UInt], Null),
+    seeScoreBob: Fun([UInt], Null)
 };
 
 export const main = Reach.App(() => {
@@ -40,33 +95,21 @@ export const main = Reach.App(() => {
         return total;
     } 
 
-    //0 = Alice wins, 1 = Draw, 2 = Bob wins
-    
-    const outcome = () => {
-        if(guessAlice == guessBob) {
-            const outcome = 1;
-            return outcome;
-        } else if(guessAlice == (handAlice + handBob)) {
-            const outcome = 0;
-            return outcome;
-        } else if(guessBob == (handAlice + handBob)) {
-            const outcome = 2;
-            return outcome;
-        } else {
-            const outcome = 1;
-            return outcome;
-        };
-    };
-    //Need to use assertations for this logic
-    const forAlice = 2;
-    const forBob = 0;
+    const winner = outcome(handAlice, handBob, guessAlice, guessBob);
+    const              [forAlice, forBob] = 
+        winner == A_WINS ? [       2,      0] :
+        winner == B_WINS ? [       0,      2] :
+        /* tie           */ [       1,      1];
+
     transfer(forAlice * wager).to(Alice);
     transfer(forBob   * wager).to(Bob);
     commit();
    
     each([Alice, Bob], () => {
         interact.seeTotal(total());
-        interact.seeOutcome(outcome());
+        interact.seeOutcome(outcome(handAlice, handBob, guessAlice, guessBob));
+        interact.seeScoreAlice(scoreAlice(handAlice, handBob, guessAlice, guessBob));
+        interact.seeScoreBob(scoreBob(handAlice, handBob, guessAlice, guessBob));
     });
 
 });

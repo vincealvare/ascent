@@ -17,6 +17,8 @@ const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
 const HAND = ['Zeru', 'Unu', 'Dui', 'Tre', 'Quattru', 'Cinque'];
 const GUESS = ['Zeru', 'Unu', 'Dui', 'Tre', 'Quattru', 'Cinque', 'Sei', 'Sette', 'Ottu', 'Nove', 'Dece'];
 const TOTAL = ['Zeru', 'Unu', 'Dui', 'Tre', 'Quattru', 'Cinque', 'Sei', 'Sette', 'Ottu', 'Nove', 'Dece'];
+const SCORE_ALICE = ['Zero', 'One', 'Two', 'Three'];
+const SCORE_BOB = ['Zero', 'One', 'Two', 'Three'];
 const OUTCOME = ['Alice wins', 'Draw', 'Bob wins'];
 
 const Player = (Who) => ({
@@ -35,13 +37,19 @@ const Player = (Who) => ({
     },
     seeOutcome: (outcome) => {
         console.log(`${Who} saw outcome: ${OUTCOME[outcome]}`);
+    },
+    seeScoreAlice: (scoreAlice) => {
+        console.log(`Alice has ${SCORE_ALICE[scoreAlice]} point(s)`);
+    },
+    seeScoreBob: (scoreBob) => {
+        console.log(`Bob has ${SCORE_BOB[scoreBob]} point(s)`);
     }
 });
 
 await Promise.all([
     ctcAlice.p.Alice({
         ...Player('Alice'),
-        wager: stdlib.parseCurrency(99)
+        wager: stdlib.parseCurrency(11)
     }),
     ctcBob.p.Bob({
         ...Player('Bob'),
