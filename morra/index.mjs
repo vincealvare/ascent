@@ -17,14 +17,21 @@ const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
 const HAND = ['Zeru', 'Unu', 'Dui', 'Tre', 'Quattru', 'Cinque'];
 const GUESS = ['Zeru', 'Unu', 'Dui', 'Tre', 'Quattru', 'Cinque', 'Sei', 'Sette', 'Ottu', 'Nove', 'Dece'];
 const TOTAL = ['Zeru', 'Unu', 'Dui', 'Tre', 'Quattru', 'Cinque', 'Sei', 'Sette', 'Ottu', 'Nove', 'Dece'];
-const SCORE_ALICE = ['Zero', 'One', 'Two', 'Three'];
-const SCORE_BOB = ['Zero', 'One', 'Two', 'Three'];
+const SCORE_ALICE = ['0', '1', '2', '3'];
+const SCORE_BOB = ['0', '1', '2', '3'];
 const OUTCOME = ['Alice wins', 'Draw', 'Bob wins'];
 
 const Player = (Who) => ({
-    throwHand: () => {
+    ...stdlib.hasRandom,
+    throwHand: async () => {
         const hand = Math.floor(Math.random() * 6);
         console.log(`${Who} played ${HAND[hand]}`);
+        if(Math.random() <= 0.01) {
+            for(let i = 0; i < 10; i++) {
+                console.log(`Waiting on ${Who}...`);
+                await stdlib.wait(1);
+            }
+        }
         return hand;
     },
     guessTotal: () => {
@@ -39,17 +46,21 @@ const Player = (Who) => ({
         console.log(`${Who} saw outcome: ${OUTCOME[outcome]}`);
     },
     seeScoreAlice: (scoreAlice) => {
-        console.log(`Alice has ${SCORE_ALICE[scoreAlice]} point(s)`);
+        console.log(`Alice: ${SCORE_ALICE[scoreAlice]}`);
     },
     seeScoreBob: (scoreBob) => {
-        console.log(`Bob has ${SCORE_BOB[scoreBob]} point(s)`);
+        console.log(`Bob: ${SCORE_BOB[scoreBob]}`);
+    },
+    informTimeout: () => {
+        console.log(`${Who} observed a timeout...`);
     }
 });
 
 await Promise.all([
     ctcAlice.p.Alice({
         ...Player('Alice'),
-        wager: stdlib.parseCurrency(11)
+        wager: stdlib.parseCurrency(5),
+        deadline: 10
     }),
     ctcBob.p.Bob({
         ...Player('Bob'),
