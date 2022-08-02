@@ -1,6 +1,36 @@
-import { loadStdlib } from '@reach-sh/stdlib';
+import { loadStdlib, ask } from '@reach-sh/stdlib';
 import * as backend from './build/index.main.mjs';
 const stdlib = loadStdlib();
+
+//expecting a yes/no y/n answer
+const isAlice = await ask.ask(
+    `Alice, is that you?`,
+    ask.yesno
+);
+const who = isAlice ? 'Alice' : 'Bob';
+
+console.log(`Starting Morra as ${who}`);
+
+//need to make or access a devnet account
+let acc = null;
+const createAcc = await ask.ask(
+    `Would you like to create an account?`,
+    ask.yesno
+);
+if(createAcc) {
+    acc = await stdlib.newTestAccount(stdlib.parseCurrency(100));
+} else {
+    const secret = await ask.ask(
+        `What is your account secret?`,
+        (x => x) //no clue what this does
+    );
+    acc = await stdlib.newAccountFromSecret(secret);
+}
+
+//leaving off at RPS line 317
+
+
+
 
 const startingBalance = stdlib.parseCurrency(100);
 const accAlice = await stdlib.newTestAccount(startingBalance);
