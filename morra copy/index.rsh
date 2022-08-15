@@ -51,45 +51,26 @@ export const main = Reach.App(() => {
 
     Alice.only(() => {
         const wager = declassify(interact.wager);
-        const deadline = declassify(interact.deadline);
-    });
-    Alice.publish(wager, deadline).pay(wager);
-    commit();
-
-    //stating that bob can't know these values before his local step 
-    //unknowable(Bob, Alice(_handAlice, _saltAlice));
-
-    Bob.only(() => {
-        interact.acceptWager(wager);
-        //const handBob = declassify(interact.getHand());
-    }); 
-    Bob.pay(wager)
-        .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
-//    commit();
-
-const totalWager = 2 * wager;
-var outcome = DRAW;
-invariant(balance() == totalWager && isOutcome(outcome));
-while(outcome == DRAW) {
-    commit();
-
-    Alice.only(() => {
         const _handAlice = interact.getHand();
         const [_commitAlice, _saltAlice] = makeCommitment(interact, _handAlice);
         const commitAlice = declassify(_commitAlice);
+        const deadline = declassify(interact.deadline);
     });
-    Alice.publish(commitAlice)
-        .timeout(relativeTime(deadline), () => closeTo(Bob, informTimeout));
+    Alice.publish(wager, commitAlice, deadline).pay(wager);
     commit();
 
+    //stating that bob can't know these values before his local step
     unknowable(Bob, Alice(_handAlice, _saltAlice));
     Bob.only(() => {
+        interact.acceptWager(wager);
         const handBob = declassify(interact.getHand());
-    });
+    }); 
     Bob.publish(handBob)
+        .pay(wager)
         .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
     commit();
 
+    //reveals alice's hand
     Alice.only(() => {
         const saltAlice = declassify(_saltAlice);
         const handAlice = declassify(_handAlice);
@@ -98,42 +79,23 @@ while(outcome == DRAW) {
         .timeout(relativeTime(deadline), () => closeTo(Bob, informTimeout));
     checkCommitment(commitAlice, saltAlice, handAlice);
 
-    outcome = winner(handAlice, handBob);
-    continue;
-}
-
-assert(outcome == A_WINS || outcome == B_WINS);
-transfer(totalWager).to(outcome == A_WINS ? Alice : Bob);
-commit();
-
-each([Alice, Bob], () => {
-    interact.seeOutcome(outcome);
-});
-
-    //reveals alice's hand
-    // Alice.only(() => {
-    //     const saltAlice = declassify(_saltAlice);
-    //     const handAlice = declassify(_handAlice);
-    // });
-    // Alice.publish(saltAlice, handAlice)
-    //     .timeout(relativeTime(deadline), () => closeTo(Bob, informTimeout));
-    // checkCommitment(commitAlice, saltAlice, handAlice);
-
     //line 238
 
     //this is the codification of rps, math is indeed everywhere
     //%3 is mod3, running up or down from zero in {0,1,2} intervals
     //const outcome = (handAlice + (4 - handBob)) % 3; 
 
-    // const outcome = winner(handAlice, handBob); //new. uses new winner method
-    // const              [forAlice, forBob] = 
-    //     outcome == A_WINS ? [       2,      0] :
-    //     outcome == B_WINS ? [       0,      2] :
-    //     /* tie           */ [       1,      1];
-    // transfer(forAlice * wager).to(Alice);
-    // transfer(forBob   * wager).to(Bob);
+    const outcome = winner(handAlice, handBob); //new. uses new winner method
+    const              [forAlice, forBob] = 
+        outcome == A_WINS ? [       2,      0] :
+        outcome == B_WINS ? [       0,      2] :
+        /* tie           */ [       1,      1];
+    transfer(forAlice * wager).to(Alice);
+    transfer(forBob   * wager).to(Bob);
+    commit();
 
-
-    
+    each([Alice, Bob], () => {
+        interact.seeOutcome(outcome);
+    });
 
 });

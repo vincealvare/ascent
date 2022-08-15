@@ -28,7 +28,7 @@ const Player = (Who) => ({
 await Promise.all([
     ctcAlice.p.Alice({
         ...Player('Alice'),
-        price: stdlib.parseCurrency(5), //can this be defined elsewhere?
+        donation: stdlib.parseCurrency(5), //can this be defined elsewhere?
         judgeFortune: () => {
             const ruling = Math.floor(Math.random() * 2);
             console.log(`${Who} ruled that the fortune was ${RULING[ruling]}`);
