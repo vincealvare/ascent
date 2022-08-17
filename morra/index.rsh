@@ -4,50 +4,48 @@
 const [isHand, ZERU, UNU, DUI, TRE, QUATTRU, CINQUE] = makeEnum(6);
 const [isGuess, G_ZERU, G_UNU, G_DUI, G_TRE, G_QUATTRU, G_CINQUE, G_SEI, G_SETTE, G_OTTU, G_NOVE, G_DECE] = makeEnum(11);
 const [isTotal, T_ZERU, T_UNU, T_DUI, T_TRE, T_QUATTRU, T_CINQUE, T_SEI, T_SETTE, T_OTTU, T_NOVE, T_DECE] = makeEnum(11);
-const [isOutcome, A_WINS, DRAW, B_WINS] = makeEnum(3);
+const [isOutcome, B_WINS, DRAW, A_WINS] = makeEnum(3);
 
 //let's find the outcome
-const outcome = (handAlice, handBob, guessAlice, guessBob) => {
+const winner = (handAlice, handBob, guessAlice, guessBob) => {
     if(guessAlice == guessBob) {
-        const outcome = DRAW;
-        return outcome;
+        const winner = DRAW;
+        return winner;
     } else if(guessAlice == (handAlice + handBob)) {
-        const outcome = A_WINS;
-        return outcome;
+        const winner = A_WINS;
+        return winner;
     } else if(guessBob == (handAlice + handBob)) {
-        const outcome = B_WINS;
-        return outcome;
+        const winner = B_WINS;
+        return winner;
     } else {
-        const outcome = DRAW;
-        return outcome;
+        const winner = DRAW;
+        return winner;
     };
 };
 
 //let's make some assertions for the outcome
-assert(outcome(UNU, TRE, UNU, TRE) == DRAW); //both get it wrong
-assert(outcome(UNU, TRE, QUATTRU, QUATTRU) == DRAW); //both get it right
-assert(outcome(UNU, TRE, QUATTRU, TRE) == A_WINS); //alice gets it, bob doesn't
-assert(outcome(UNU, TRE, TRE, QUATTRU) == B_WINS); //bob gets it, alice doesn't
+assert(winner(UNU, TRE, UNU, TRE) == DRAW); //both get it wrong
+assert(winner(UNU, TRE, QUATTRU, QUATTRU) == DRAW); //both get it right
+assert(winner(UNU, TRE, QUATTRU, TRE) == A_WINS); //alice gets it, bob doesn't
+assert(winner(UNU, TRE, TRE, QUATTRU) == B_WINS); //bob gets it, alice doesn't
 
 forall(UInt, handAlice =>
     forall(UInt, handBob =>
         forall(UInt, guessAlice =>
             forall(UInt, guessBob =>
-assert(isOutcome(outcome(handAlice, handBob, guessAlice, guessBob)))))));
+assert(isOutcome(winner(handAlice, handBob, guessAlice, guessBob)))))));
 
 forall(UInt, (guess) => 
     forall(UInt, handAlice =>
         forall(UInt, handBob =>
-assert(outcome(handAlice, handBob, guess, guess) == DRAW))));
+assert(winner(handAlice, handBob, guess, guess) == DRAW))));
 
 const Player = {
     ...hasRandom,
-    throwHand: Fun([], UInt),
-    guessTotal: Fun([], UInt),
-    seeTotal: Fun([UInt], Null),
+    getHand: Fun([], UInt),
+    getGuess: Fun([], UInt),
+    //seeTotal: Fun([UInt], Null),
     seeOutcome: Fun([UInt], Null),
-    seeScoreAlice: Fun([UInt], Null),
-    seeScoreBob: Fun([UInt], Null),
     informTimeout: Fun([], Null)
 };
 
@@ -85,15 +83,15 @@ export const main = Reach.App(() => {
     //note no commit here
     //loop start
     const totalWager = 2 * wager;
-    var winner = DRAW;
-    invariant(balance() == totalWager && isOutcome(winner));
-    while (winner == DRAW) {
+    var outcome = DRAW;
+    invariant(balance() == totalWager && isOutcome(outcome));
+    while (outcome == DRAW) {
         //commit inside the loop
         commit();
 
         Alice.only(() => {
-            const _handAlice = interact.throwHand();
-            const _guessAlice = interact.guessTotal();
+            const _handAlice = interact.getHand();
+            const _guessAlice = interact.getGuess();
             const [_commitHandAlice, _saltHandAlice] = makeCommitment(interact, _handAlice);
             const [_commitGuessAlice, _saltGuessAlice] = makeCommitment(interact, _guessAlice);
             const commitHandAlice = declassify(_commitHandAlice);
@@ -106,8 +104,8 @@ export const main = Reach.App(() => {
         unknowable(Bob, Alice(_handAlice, _saltHandAlice));
         unknowable(Bob, Alice(_guessAlice, _saltGuessAlice));
         Bob.only(() => {
-            const handBob = declassify(interact.throwHand());
-            const guessBob = declassify(interact.guessTotal());
+            const handBob = declassify(interact.getHand());
+            const guessBob = declassify(interact.getGuess());
         });
         Bob.publish(handBob, guessBob)
             .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
@@ -124,16 +122,16 @@ export const main = Reach.App(() => {
         checkCommitment(commitHandAlice, saltHandAlice, handAlice);
         checkCommitment(commitGuessAlice, saltGuessAlice, guessAlice);
  
-        winner = outcome(handAlice, handBob, guessAlice, guessBob);
+        outcome = winner(handAlice, handBob, guessAlice, guessBob);
         continue;
     }
 
-    assert(winner == A_WINS || winner == B_WINS);
-    transfer(totalWager).to(winner == A_WINS ? Alice : Bob);
+    assert(outcome == A_WINS || outcome == B_WINS);
+    transfer(totalWager).to(outcome == A_WINS ? Alice : Bob);
     commit();
 
     each([Alice, Bob], () => {
-        interact.seeOutcome(winner);
+        interact.seeOutcome(outcome);
     });
 
 });
