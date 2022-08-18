@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@600&display=swap');
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+h2 {
+  margin:0px;
+  padding-bottom:5px;
+  font-family: 'Barlow', sans-serif;
+  border-bottom: solid 2px #6B4E71;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #6B4E71;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-header h1 {
+  font-family: 'Silkscreen', serif;
+  color: #EEF1BD;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.content-main {
+  width:75%;
+  border-radius: 8px;
+  background:#EEF1BD;
+  padding:15px 20px;
+  color:#6B4E71;
+  font-family: 'Zilla Slab', serif;
+}
+
+.content-inner {
+  padding:20px;
+}
+
+.conditional-text {
+  display:block;
+  padding-bottom:10px;
+}
+
+.winner {
+  font-family: 'Silkscreen', serif;
+  font-size: calc(10px + 6vmin);
+  color:#6B4E71;
+  display:block;
+  margin-top:10px;
+}
+
+.balance {
+  font-family: 'Barlow', sans-serif;
+}
+
+.fund-inputs {
+  padding:15px 10px;
+}
+
+input[type=number] {
+  font-size: calc(10px + 2vmin);
+  width: 4em;
+  border-radius:4px;
+  border:solid 1px #6B4E71;
+  padding:3px 5px 5px;
+  display:inline-block;
+}
+
+button {
+  font-size: calc(10px + 1.5vmin);
+  margin-left:10px;
+  margin-bottom:10px;
+  display:inline-block;
+  background-color:#EEF1BD;
+  color:#6B4E71;
+  border-radius:4px;
+  border:solid 1px #6B4E71;
+  padding:6px 10px;
+}
+
+button:hover {
+  color:#EEF1BD;
+  background-color:#6B4E71;
+  cursor:pointer;
+}
+
+textarea {
+  font-size: calc(10px + 2vmin);
+  max-width:calc(100% - 40px);
+  margin-top:10px;
+}
+
+.ContractInfo {
+  font-size: calc(10px + 1vmin);
+  text-align: left;
+  width: 90vw;
+  height: 7em;
+  padding: 2vw;
+  overflow-x: scroll;
+  white-space: pre;
+}
